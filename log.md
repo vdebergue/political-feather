@@ -6,4 +6,5 @@ Journal
 - création de l'application sur dev.twitter.com (Political Feather)
 - test de connexion à l'api de streaming
 
+- create twitter actor
 
