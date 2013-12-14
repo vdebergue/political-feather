@@ -7,4 +7,6 @@ Journal
 - test de connexion à l'api de streaming
 
 - create twitter actor
+- try using twitter4j
+
 
