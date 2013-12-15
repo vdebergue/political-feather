@@ -26,4 +26,8 @@ trait User {
   def screenName : String
   def profileImageUrl : String
 
+  override def toString() = {
+    "@" + screenName
+  }
+
 }
