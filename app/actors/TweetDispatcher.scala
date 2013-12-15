@@ -2,6 +2,7 @@ package actors
 
 import akka.actor._
 import twitter4j._
+import models.Tweet
 
 class TweetDispatcher extends Actor with ActorLogging {
 
@@ -10,9 +11,10 @@ class TweetDispatcher extends Actor with ActorLogging {
   val mongoStore = context.actorOf(Props[MongoStoreActor], name = "mongoStore")
   
   def receive = {
-    case tweet : Status => 
+    case tweet : Tweet =>
       received += 1
-      mongoStore ! tweet
+      // if we want to store the tweet in mongo
+      // mongoStore ! tweet
       log.info(s"Received $received tweets so far ...")
   }
 

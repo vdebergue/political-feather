@@ -7,8 +7,14 @@ import play.api._
 import akka.actor._
 import play.api.libs.concurrent.Akka
 import play.api.Play.current
+import models.TweetAdapter
 
-object TwitterStream {
+trait TweetStream {
+  def start() : Unit
+  def stop() : Unit
+}
+
+class TwitterStream(tweetDispatcher: ActorRef) extends TweetStream {
 
   val cb = new ConfigurationBuilder()
   cb.setDebugEnabled(true)
@@ -18,8 +24,7 @@ object TwitterStream {
     .setOAuthAccessTokenSecret(Conf.accessTokenSecret)
 
   val twitterStream = new TwitterStreamFactory(cb.build()).getInstance()
-  val tweetDispatcher : ActorRef = Akka.system.actorOf(Props[TweetDispatcher], name = "tweetDispatcher")
-  
+
   def start() = {
     val query = new FilterQuery().follow(Conf.ids.toArray)
     val listener = new MyListener(tweetDispatcher)
@@ -36,7 +41,7 @@ object TwitterStream {
 class MyListener(tweetDispatcher : ActorRef) extends StatusListener {
 
   override def onStatus(status : Status) {
-    tweetDispatcher ! status
+    tweetDispatcher ! new TweetAdapter(status)
   }
 
   override def onDeletionNotice(notice: StatusDeletionNotice): Unit = {}

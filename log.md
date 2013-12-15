@@ -8,5 +8,8 @@ Journal
 
 - create twitter actor
 - try using twitter4j
-- save some tweets into a mongo Db
+- save some tweets into a mongo Database
+
+- create an intermediate trait (models.Tweet) between twitter4j.Status and Json data (BSON in fact) stored in mongo
+- create a stream of tweets from the the mongo Db
 

@@ -13,5 +13,6 @@ object Conf {
   lazy val accessToken = Conf.getKey("twitter.client.accessToken")
   lazy val accessTokenSecret = Conf.getKey("twitter.client.accessTokenSecret")
   lazy val twitterStreamUrl = Conf.getKey("twitter.url")
+  // Simple way to convert java.util.List[java.lang.Long] to scala.immutable.List[scala.Long]
   lazy val ids : List[Long] = current.configuration.getLongList("twitter.ids").getOrElse(throw new Exception("Could not find ids")).asScala.map(Long.unbox(_)).toList
 }
