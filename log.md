@@ -8,5 +8,5 @@ Journal
 
 - create twitter actor
 - try using twitter4j
-
+- save some tweets into a mongo Db
 

@@ -1,12 +1,12 @@
 package actors
 
 import utils.Conf
-import play.api.libs.json.{JsValue, Json}
 import twitter4j._
 import twitter4j.conf.ConfigurationBuilder
 import play.api._
 import akka.actor._
-import play.libs.concurrent.Akka
+import play.api.libs.concurrent.Akka
+import play.api.Play.current
 
 object TwitterStream {
 
@@ -21,8 +21,8 @@ object TwitterStream {
   val tweetDispatcher : ActorRef = Akka.system.actorOf(Props[TweetDispatcher], name = "tweetDispatcher")
   
   def start() = {
-    val query = new FilterQuery().track(Array("Hollande"))
-    val listener = new MyListener
+    val query = new FilterQuery().follow(Conf.ids.toArray)
+    val listener = new MyListener(tweetDispatcher)
     twitterStream.addListener(listener)
     twitterStream.filter(query)
   }
@@ -33,7 +33,7 @@ object TwitterStream {
   }
 }
 
-class MyListener extends StatusListener {
+class MyListener(tweetDispatcher : ActorRef) extends StatusListener {
 
   override def onStatus(status : Status) {
     tweetDispatcher ! status
@@ -44,7 +44,7 @@ class MyListener extends StatusListener {
   override def onStallWarning(warning: StallWarning): Unit = {}
   override def onTrackLimitationNotice(numberOfLimitedStatuses: Int): Unit = {}
   override def onException(ex: Exception): Unit = {
-    Logger.error("Got error" + ex.getMessage())
+    Logger.error("Got error " + ex.getMessage())
   }
 }
 
