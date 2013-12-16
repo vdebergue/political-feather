@@ -9,7 +9,7 @@ trait Ranking[T] {
 
 class RankingImpl[T](numberOfElements: Int) extends Ranking[T]{
 
-  val tree = collection.mutable.TreeSet[(T, Long)]()
+  val tree = collection.mutable.TreeSet[(T, Long)]()(Ordering.by[(T, Long), Long](_._2))
   var size = 0
 
   def add(t : T, count: Long) {

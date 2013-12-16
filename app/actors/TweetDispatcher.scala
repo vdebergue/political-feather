@@ -18,8 +18,9 @@ class TweetDispatcher extends Actor with ActorLogging {
       received += 1
       // if we want to store the tweet in mongo
       // mongoStore ! tweet
-      mostActive ! tweet
-      mostUsedHashtags ! tweet
+
+      // mostActive ! tweet
+      // mostUsedHashtags ! tweet
       //log.info(s"Received $received tweets so far ...")
   }
 
