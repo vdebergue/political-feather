@@ -2,24 +2,25 @@ package actors.analysis
 
 import akka.actor.Actor
 import models.{User, Tweet}
+import models.analysis.{Ranking, SlidingWindowCounter}
 
 class MostActive extends Actor {
 
-  val usersCount = collection.mutable.Map[User, Int]()
+  val usersCount = SlidingWindowCounter.oneDay[User]
 
   def receive = {
     case tweet : Tweet =>
-      val userCountOption = usersCount.get(tweet.user)
-      userCountOption match {
-        case Some(count) => usersCount.update(tweet.user, count + 1)
-        case None => usersCount += (tweet.user -> 1)
-      }
+      usersCount.increment(tweet.user, tweet.createdAt)
 
     //println("MA: " + mostActive)
   }
 
-  def mostActive : (User, Int) = {
-    usersCount.maxBy(_._2)
+  def mostActive : (User, Long) = {
+    usersCount.top1
+  }
+
+  def mostActiveTop10 = {
+    usersCount.top10
   }
 
 }

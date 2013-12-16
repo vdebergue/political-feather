@@ -57,9 +57,15 @@ class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
     topN.getTop()
   }
 
-  def getTop10(): Map[T, Long] = {
+  def top10: Map[T, Long] = {
     val r10 = Ranking[T](10)
     getTop(r10)
+  }
+
+  def top1: (T, Long) = {
+    val r1 = Ranking[T](1)
+    getTop(r1)
+    r1.getMax()
   }
 }
 
@@ -71,5 +77,9 @@ object SlidingWindowCounter {
 
   def oneWeek[T] : SlidingWindowCounter[T] = {
     new SlidingWindowCounter[T](Period.weeks(1))
+  }
+
+  def apply[T](p : Period) = {
+    new SlidingWindowCounter[T](p)
   }
 }

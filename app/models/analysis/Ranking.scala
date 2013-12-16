@@ -5,6 +5,7 @@ import scala.math.Ordering.Implicits._
 trait Ranking[T] {
   def add(t: T, count: Long) : Unit
   def getTop() : Map[T, Long]
+  def getMax() : (T, Long)
 }
 
 class RankingImpl[T](numberOfElements: Int) extends Ranking[T]{
@@ -30,6 +31,10 @@ class RankingImpl[T](numberOfElements: Int) extends Ranking[T]{
   def getTop() : Map[T, Long] = {
     tree.toMap
   }
+
+  def getMax() = {
+    tree.maxBy(_._2)
+  }
 }
 
 class RankingOne[T] extends Ranking[T] {
@@ -46,6 +51,11 @@ class RankingOne[T] extends Ranking[T] {
   def getTop() : Map[T, Long] = {
     Map(elem.get -> c)
   }
+
+  def getMax() : (T, Long) = {
+    (elem.get -> c)
+  }
+
 }
 
 object Ranking {

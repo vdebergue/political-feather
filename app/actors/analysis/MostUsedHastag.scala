@@ -2,25 +2,26 @@ package actors.analysis
 
 import akka.actor.Actor
 import models.Tweet
+import models.analysis.SlidingWindowCounter
 
 class MostUsedHastag extends Actor {
 
-  val hastagsCount = collection.mutable.Map[String, Int]()
+  val hastagsCount = SlidingWindowCounter.oneDay[String]
 
   def receive = {
     case tweet : Tweet =>
       tweet.hashtags.foreach{ h =>
-        hastagsCount.get(h) match {
-          case Some(count) => hastagsCount.update(h, count + 1)
-          case None => hastagsCount += (h -> 1)
-        }
+        hastagsCount.increment(h, tweet.createdAt)
       }
-      println("Most Used Hastag: " + mostUsed)
 
   }
 
-  def mostUsed : (String, Int) = {
-    hastagsCount.maxBy(_._2)
+  def mostUsed : (String, Long) = {
+    hastagsCount.top1
+  }
+
+  def top10 = {
+    hastagsCount.top10
   }
 
 }
