@@ -15,7 +15,7 @@ class MostActive extends Actor {
         case None => usersCount += (tweet.user -> 1)
       }
 
-    println("MA: " + mostActive)
+    //println("MA: " + mostActive)
   }
 
   def mostActive : (User, Int) = {

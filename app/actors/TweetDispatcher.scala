@@ -3,7 +3,7 @@ package actors
 import akka.actor._
 import twitter4j._
 import models.Tweet
-import actors.analysis.MostActive
+import actors.analysis.{MostUsedHastag, MostActive}
 
 class TweetDispatcher extends Actor with ActorLogging {
 
@@ -11,6 +11,7 @@ class TweetDispatcher extends Actor with ActorLogging {
   
   val mongoStore = context.actorOf(Props[MongoStoreActor], name = "mongoStore")
   val mostActive = context.actorOf(Props[MostActive], "mostActive")
+  val mostUsedHashtags = context.actorOf(Props[MostUsedHastag], "mostUsedHashtags")
   
   def receive = {
     case tweet : Tweet =>
@@ -18,7 +19,8 @@ class TweetDispatcher extends Actor with ActorLogging {
       // if we want to store the tweet in mongo
       // mongoStore ! tweet
       mostActive ! tweet
-      log.info(s"Received $received tweets so far ...")
+      mostUsedHashtags ! tweet
+      //log.info(s"Received $received tweets so far ...")
   }
 
 }

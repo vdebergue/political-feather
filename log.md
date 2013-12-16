@@ -11,4 +11,5 @@ Journal
 - create an intermediate trait (models.Tweet) between twitter4j.Status and Json data (BSON in fact) stored in mongo
 - create a stream of tweets from the the mongo Db
 - test a basic analysis on the stream (most active users)
+- most used hashtags
 
