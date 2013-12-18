@@ -15,20 +15,20 @@ class RankingImpl[T](numberOfElements: Int) extends Ranking[T]{
 
   def add(t : T, count: Long) {
     if(size < numberOfElements) {
-      tree.add(t -> count)
+      tree += (t -> count)
       size += 1
     } else {
       // get the min element
       val min = tree.minBy(_._2)
       if(min._2 < count) {
         tree.remove(min)
-        tree.add(t -> count)
-        size += 1
+        tree += (t -> count)
       }
     }
   }
 
   def getTop() : Map[T, Long] = {
+    println("size: " + numberOfElements + "/" + tree.size)
     tree.toMap
   }
 

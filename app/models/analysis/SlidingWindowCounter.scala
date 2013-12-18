@@ -18,9 +18,11 @@ class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
 
   def increment(t : T, date: DateTime) {
     val hour = date.getHourOfDay()
-    if (currentHour != hour) {
+    if (currentHour != hour && currentHour != -1) {
       currentHour = hour
       advancePosition()
+    } else if(currentHour == -1) {
+      currentHour = hour
     }
     map.get(t) match {
       case Some(arr) => arr(currentPosition) = arr(currentPosition) + 1
