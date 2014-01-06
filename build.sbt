@@ -7,7 +7,7 @@ resolvers += "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositori
 libraryDependencies ++= Seq(
     "org.twitter4j" % "twitter4j-core" % "3.0.5",
     "org.twitter4j" % "twitter4j-stream" % "3.0.5",
-    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.1"
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.2"
 )     
 
 play.Project.playScalaSettings

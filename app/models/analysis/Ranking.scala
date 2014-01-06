@@ -1,7 +1,5 @@
 package models.analysis
 
-import scala.math.Ordering.Implicits._
-
 trait Ranking[T] {
   def add(t: T, count: Long) : Unit
   def getTop() : Map[T, Long]
@@ -10,30 +8,18 @@ trait Ranking[T] {
 
 class RankingImpl[T](numberOfElements: Int) extends Ranking[T]{
 
-  val tree = collection.mutable.TreeSet[(T, Long)]()(Ordering.by[(T, Long), Long](_._2))
-  var size = 0
+  val queue = utils.CappedOrderedQueue[(T, Long)](numberOfElements)(Ordering.by[(T, Long), Long](_._2))
 
   def add(t : T, count: Long) {
-    if(size < numberOfElements) {
-      tree += (t -> count)
-      size += 1
-    } else {
-      // get the min element
-      val min = tree.minBy(_._2)
-      if(min._2 < count) {
-        tree.remove(min)
-        tree += (t -> count)
-      }
-    }
+    queue.add(t -> count)
   }
 
   def getTop() : Map[T, Long] = {
-    println("size: " + numberOfElements + "/" + tree.size)
-    tree.toMap
+    queue.toList.toMap
   }
 
   def getMax() = {
-    tree.maxBy(_._2)
+    queue.max
   }
 }
 

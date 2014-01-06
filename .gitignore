@@ -16,3 +16,9 @@ dist
 
 twitter.conf
 *.iml
+node_modules
+.tmp
+.sass-cache
+app/bower_components
+/*.sublime-project
+/*.sublime-workspace
