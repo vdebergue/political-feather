@@ -2,7 +2,7 @@ package models.analysis
 
 trait Ranking[T] {
   def add(t: T, count: Long) : Unit
-  def getTop() : Map[T, Long]
+  def getTop() : List[(T, Long)]
   def getMax() : (T, Long)
 }
 
@@ -14,8 +14,8 @@ class RankingImpl[T](numberOfElements: Int) extends Ranking[T]{
     queue.add(t -> count)
   }
 
-  def getTop() : Map[T, Long] = {
-    queue.toList.toMap
+  def getTop() : List[(T, Long)] = {
+    queue.toList
   }
 
   def getMax() = {
@@ -34,8 +34,8 @@ class RankingOne[T] extends Ranking[T] {
     }
   }
 
-  def getTop() : Map[T, Long] = {
-    Map(elem.get -> c)
+  def getTop() : List[(T, Long)] = {
+    List(elem.get -> c)
   }
 
   def getMax() : (T, Long) = {

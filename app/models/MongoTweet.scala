@@ -17,6 +17,15 @@ object JsonFormat {
     (__ \ "profile_image_url").read[String]
    )(MongoUser.apply _)
 
+  implicit val userWrites: Writes[User] = new Writes[User] {
+    def writes(o: User): JsValue = Json.obj(
+      "id" -> o.id,
+      "name" -> o.name,
+      "screenName" -> o.screenName,
+      "profileImageUrl" -> o.profileImageUrl
+    )
+  }
+
   implicit  val tweetReads : Reads[Tweet] = (
     (__ \ "id").read[Long] and
       (__ \ "created_at").read[DateTime] and

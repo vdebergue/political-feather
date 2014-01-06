@@ -17,7 +17,7 @@ class SlidingWindowCounterTest extends Specification {
       swc.increment("test", now)
       swc.increment("notest", now)
 
-      swc.top10 must_== Map(("test" -> 2), ("notest" -> 1))
+      swc.top10 must_== List(("test" -> 2), ("notest" -> 1))
     }
 
     "getTop with events on several hours" in {
@@ -26,14 +26,14 @@ class SlidingWindowCounterTest extends Specification {
       swc.increment("test", now)
       swc.increment("test", now)
       swc.increment("test2", now)
-      swc.top10 must_== Map("test" -> 2, "test2" -> 1)
+      swc.top10 must_== List("test" -> 2, "test2" -> 1)
 
       (1 to 24).foreach { i =>
         val date = now.plusHours(i)
         swc.increment("test" , date)
       }
 
-      swc.top10 must_== Map("test" -> 24)
+      swc.top10 must_== List("test" -> 24)
     }
 
     "getTop with one week window" in {
@@ -49,19 +49,19 @@ class SlidingWindowCounterTest extends Specification {
       }
 
       // value should be of two increments for a week
-      swc.top10 must_== Map("test" -> delta*2)
+      swc.top10 must_== List("test" -> delta*2)
     }
 
     "get top 10" in {
       val swc = SlidingWindowCounter.oneWeek[String]
       val now = DateTime.now()
-      val m = collection.mutable.Map[String, Long]()
+      val m = collection.mutable.ListBuffer[(String, Long)]()
 
       (1 to 10).foreach { i =>
         swc.increment("test" + i, now)
         m+= ("test"+i -> 1)
       }
-      swc.top10 must_== m.toMap
+      swc.top10.toMap must_== m.toList.toMap
     }
   }
 

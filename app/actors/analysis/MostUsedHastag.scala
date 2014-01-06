@@ -4,7 +4,7 @@ import akka.actor.Actor
 import models.Tweet
 import models.analysis.SlidingWindowCounter
 import actors.TweetDispatcher
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Writes, Json}
 
 class MostUsedHastag extends Actor {
 
@@ -24,8 +24,15 @@ class MostUsedHastag extends Actor {
     hastagsCount.top1
   }
 
-  def top10 = {
+  def top10 : List[(String, Long)] = {
     hastagsCount.top10
+  }
+
+  implicit val topWrites: Writes[(String, Long)] = new Writes[(String, Long)] {
+    def writes(o: (String, Long)): JsValue = Json.obj(
+      "hashtag" -> o._1,
+      "count" -> o._2
+    )
   }
 
 }

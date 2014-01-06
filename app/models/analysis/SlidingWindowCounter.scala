@@ -50,7 +50,7 @@ class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
     elementstoRemove.foreach(map.remove(_))
   }
 
-  def getTop(topN: Ranking[T]): Map[T, Long] = {
+  def getTop(topN: Ranking[T]): List[(T, Long)] = {
     map.foreach{
       case (t, arr: Array[Long]) =>
         val count = arr.sum
@@ -59,7 +59,7 @@ class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
     topN.getTop()
   }
 
-  def top10: Map[T, Long] = {
+  def top10: List[(T, Long)] = {
     val r10 = Ranking[T](10)
     getTop(r10)
   }

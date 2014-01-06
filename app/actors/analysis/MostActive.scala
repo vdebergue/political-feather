@@ -15,9 +15,8 @@ class MostActive extends Actor {
     case tweet : Tweet =>
       usersCount.increment(tweet.user, tweet.createdAt)
     case TweetDispatcher.Tick =>
-      // TODO
-      //val json = Json.toJson(mostActiveTop10)
-      //TweetDispatcher.inMostActive.push(json)
+      val json = Json.toJson(mostActiveTop10)
+      TweetDispatcher.inMostActive.push(json)
 
   }
 
@@ -25,8 +24,15 @@ class MostActive extends Actor {
     usersCount.top1
   }
 
-  def mostActiveTop10: Map[User, Long] = {
+  def mostActiveTop10: List[(User, Long)] = {
     usersCount.top10
+  }
+
+  implicit val topWrites: Writes[(User, Long)] = new Writes[(User, Long)] {
+    def writes(o: (User, Long)): JsValue = Json.obj(
+      "user" -> Json.toJson(o._1),
+      "count" -> o._2
+    )
   }
 
 }
