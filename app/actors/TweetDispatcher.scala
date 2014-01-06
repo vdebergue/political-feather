@@ -43,9 +43,9 @@ class TweetDispatcher extends Actor with ActorLogging {
 
 object TweetDispatcher {
   object Tick
-  val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
-  val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-  outHashtags |>>> Iteratee.foreach[JsValue](println)
+//  import scala.concurrent.ExecutionContext.Implicits.global
+//  outHashtags.interleave(outMostActive) |>>> Iteratee.foreach[JsValue](println)
 }
