@@ -16,6 +16,7 @@ object Application extends Controller {
   lazy val inIgnore = Iteratee.ignore[String]
   lazy val outStream = (TweetDispatcher.outHashtags &> enumerateeHeader("hashtags"))
     .interleave(TweetDispatcher.outMostActive &> enumerateeHeader("mostActive"))
+    .interleave(TweetDispatcher.outWordUsage &> enumerateeHeader("wordUsage"))
     .through(Enumeratee.map[JsObject](_.toString()))
 
   def feed = WebSocket.using[String] { request =>

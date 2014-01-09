@@ -13,7 +13,6 @@ import play.api.libs.iteratee.Concurrent.Channel
 class TweetDispatcher extends Actor with ActorLogging {
 
   var received = 0
-
   //val mongoStore = context.actorOf(Props[MongoStoreActor], name = "mongoStore")
 
   val analysisActors = ListBuffer[ActorRef]()
@@ -45,6 +44,7 @@ object TweetDispatcher {
   object Tick
   lazy val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outWordUsage: Enumerator[JsValue], inWordUsage: Channel[JsValue]) = Concurrent.broadcast[JsValue]
 
 //  import scala.concurrent.ExecutionContext.Implicits.global
 //  outHashtags.interleave(outMostActive) |>>> Iteratee.foreach[JsValue](println)
