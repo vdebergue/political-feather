@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 import actors.analysis.WordUsage._
 import models.analysis.SlidingWindowCounter
 import actors.TweetDispatcher
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Writes, Json}
 
 /**
  * Created by vince on 09/01/14.
@@ -41,6 +41,12 @@ class WordUsage extends Actor {
   def cleanDates() {
     val now = DateTime.now()
     dates.foreach(t => dates.update(t._1, t._2.filter(datesAreSameDay(now, _))))
+  }
+
+  implicit val topWrites: Writes[List[(String, List[DateTime])]] = new Writes[List[(String, List[DateTime])]] {
+    def writes(o: List[(String, List[DateTime])]): JsValue = Json.arr(
+      o.map(t => Json.obj(t._1 -> Json.arr(t._2)))
+    )
   }
 }
 
