@@ -9,8 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def index = Action { implicit request =>
+    Ok(views.html.index(request))
   }
 
   lazy val inIgnore = Iteratee.ignore[String]
@@ -20,6 +20,7 @@ object Application extends Controller {
     .through(Enumeratee.map[JsObject](_.toString()))
 
   def feed = WebSocket.using[String] { request =>
+    TweetDispatcher.actor ! TweetDispatcher.Tick
     (inIgnore, outStream)
   }
 

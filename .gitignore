@@ -22,3 +22,4 @@ node_modules
 app/bower_components
 /*.sublime-project
 /*.sublime-workspace
+public/bower_components

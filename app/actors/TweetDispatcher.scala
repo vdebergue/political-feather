@@ -12,6 +12,7 @@ import play.api.libs.iteratee.Concurrent.Channel
 
 class TweetDispatcher extends Actor with ActorLogging {
 
+  TweetDispatcher.actor = self
   var received = 0
   //val mongoStore = context.actorOf(Props[MongoStoreActor], name = "mongoStore")
 
@@ -44,6 +45,7 @@ class TweetDispatcher extends Actor with ActorLogging {
 
 object TweetDispatcher {
   object Tick
+  var actor : ActorRef = _
   lazy val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outWordUsage: Enumerator[JsValue], inWordUsage: Channel[JsValue]) = Concurrent.broadcast[JsValue]

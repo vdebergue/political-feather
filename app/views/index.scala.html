@@ -1,7 +1,23 @@
-@(message: String)
+@(implicit request: RequestHeader)
 
-@main("Welcome to Play") {
+@scripts = {
+    <script>
+        var Config = {
+            "wsUrl" : "@routes.Application.feed.webSocketURL()"
+        }
+    </script>
+    <script src="@routes.Assets.at("bower_components/d3js/build/d3.v3.min.js")" charset="utf-8"></script>
+    <script src="@routes.Assets.at("javascripts/main.js")"></script>
+}
 
-    @play20.welcome(message)
+@main("Political Feather", scripts) {
+    <div class="container">
+        <h1>Coucou</h1>
+
+        <svg class="hashtags"></svg>
+    </div>
+
+
+
 
 }
