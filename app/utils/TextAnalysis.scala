@@ -18,10 +18,14 @@ object TextAnalysis {
   }
 
   def classifyPhrase(phrase: String) = {
-    val words = phrase.split(' ')
-    var classes = Seq[Int]()
+    val words = phrase.split(' ').toList
+    classify(words)
+  }
+
+  def classify(words: List[String]) = {
+    var classes = mutable.Buffer[Int]()
     for( word <- words) {
-      val optionCat = classifyWord(word.toLowerCase).map(s => classes = classes ++ s)
+      classifyWord(word.toLowerCase).map(s => classes ++= s)
     }
     classes.groupBy(identity).mapValues(_.size) -- nonMeaningfullCategories
   }
@@ -33,6 +37,17 @@ object TextAnalysis {
       else scores
     )
     (round2(positive/wordCount), round2(negative/wordCount))
+  }
+
+  def getCategoryName(category: Int) : String = {
+    categories(category)
+  }
+
+  def analyse(stems: List[String]) : (Double, Double, Map[Int, Int]) = {
+    val wordCount = stems.length
+    val categories = classify(stems)
+    val (pos, neg) = sentiment(categories, wordCount)
+    (pos, neg, categories)
   }
 
   private def round2(x: Double) : Double = {

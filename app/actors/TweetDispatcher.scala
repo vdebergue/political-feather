@@ -4,7 +4,7 @@ import akka.actor._
 import models.Tweet
 import TweetDispatcher._
 import scala.concurrent.duration._
-import actors.analysis.{MostUsedHastag, MostActive}
+import actors.analysis.{TextDispatcher, MostUsedHastag, MostActive}
 import scala.collection.mutable.ListBuffer
 import play.api.libs.iteratee.{Iteratee, Concurrent, Enumerator}
 import play.api.libs.json.JsValue
@@ -18,8 +18,10 @@ class TweetDispatcher extends Actor with ActorLogging {
   val analysisActors = ListBuffer[ActorRef]()
   val mostActive = context.actorOf(Props[MostActive], "mostActive")
   val mostUsedHashtags = context.actorOf(Props[MostUsedHastag], "mostUsedHashtags")
+  val textDispatcher = context.actorOf(Props[TextDispatcher], "textDispatcher")
   analysisActors += mostActive
   analysisActors += mostUsedHashtags
+  analysisActors += textDispatcher
 
   // Send a tick every 30 sec
   context.system.scheduler.schedule(30.seconds, 30.seconds, self, Tick)(context.dispatcher)

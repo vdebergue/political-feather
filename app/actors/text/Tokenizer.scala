@@ -2,6 +2,8 @@ package actors.text
 
 import akka.actor.Actor
 import actors.text.Tokenizer.Result
+import models.Tweet
+import models.text.{WithTweet, Tokenized}
 
 /**
  * Created by vince on 09/01/14.
@@ -9,7 +11,9 @@ import actors.text.Tokenizer.Result
 class Tokenizer extends Actor {
 
   def receive = {
-    case phrase : String => sender ! Result(tokenize(phrase))
+    case tweet : Tweet => {
+      sender ! Result(tweet, tokenize(tweet.text))
+    }
   }
 
   def tokenize(text: String): List[String] = {
@@ -17,7 +21,7 @@ class Tokenizer extends Actor {
   }
 
   def isStopWord(word: String) : Boolean = {
-    stopWords.contains(word)
+    stopWords.contains(word.trim)
   }
 
   val stopWords = List("au", "aux", "avec", "ce", "ces", "dans", "de", "des", "du",
@@ -38,5 +42,5 @@ class Tokenizer extends Actor {
 }
 
 object Tokenizer {
-  case class Result(words: List[String])
+  case class Result(tweet: Tweet, tokens: List[String]) extends Tokenized with WithTweet
 }

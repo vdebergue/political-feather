@@ -3,6 +3,8 @@ package actors.text
 import akka.actor.Actor
 import org.tartarus.snowball.ext.FrenchStemmer
 import actors.text.Stemmer._
+import models.Tweet
+import models.text.{Tokenized, Stemmed, WithTweet}
 
 /**
  * Created by vince on 09/01/14.
@@ -10,7 +12,7 @@ import actors.text.Stemmer._
 class Stemmer extends Actor {
 
   def receive = {
-    case Input(words) => sender ! Result(words.map(stem))
+    case Input(tweet, tokens) => sender ! Result(tweet, tokens.map(stem))
   }
 
   val stemmer = new FrenchStemmer()
@@ -25,6 +27,6 @@ class Stemmer extends Actor {
 }
 
 object Stemmer {
-  case class Input(words: List[String])
-  case class Result(stemmedWords: List[String])
+  case class Input(tweet: Tweet , tokens: List[String]) extends Tokenized with WithTweet
+  case class Result(tweet: Tweet, stems: List[String]) extends Stemmed with WithTweet
 }

@@ -16,7 +16,7 @@ class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
   private val numberOfSlots = timespan.toStandardHours().getHours()
 
 
-  def increment(t : T, date: DateTime) {
+  def increment(t : T, date: DateTime, times : Int) {
     val hour = date.getHourOfDay()
     if (currentHour != hour && currentHour != -1) {
       currentHour = hour
@@ -25,13 +25,17 @@ class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
       currentHour = hour
     }
     map.get(t) match {
-      case Some(arr) => arr(currentPosition) = arr(currentPosition) + 1
+      case Some(arr) => arr(currentPosition) = arr(currentPosition) + times
       case None => {
         val arr = new Array[Long](numberOfSlots)
-        arr(currentPosition) = 1
+        arr(currentPosition) = times
         map += (t -> arr)
       }
     }
+  }
+
+  def increment(t : T, date: DateTime) {
+    increment(t,date,1)
   }
 
   private def advancePosition() {
