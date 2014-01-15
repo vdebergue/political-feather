@@ -2,19 +2,25 @@
     width: 500px;
     height: 500px;
 
-    div {
-        background-color: steelblue;
-        padding: 3px;
-        margin: 1px;
-        color: white;
-    }
-
     rect {
         fill: steelblue;
     }
 
     text {
         fill: white;
+    }
+
+    .axis {
+        text {
+            fill : black;
+            font: 10px sans-serif;
+        }
+        path, line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
     }
 
 }
