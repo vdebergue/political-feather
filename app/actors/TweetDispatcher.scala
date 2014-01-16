@@ -26,6 +26,9 @@ class TweetDispatcher extends Actor with ActorLogging {
 
   // Send a tick every 30 sec
   context.system.scheduler.schedule(30.seconds, 30.seconds, self, Tick)(context.dispatcher)
+
+  // Send a save every 5mn
+  context.system.scheduler.schedule(5.minutes, 5.minutes, self, Save)(context.dispatcher)
   
   def receive = {
     case tweet : Tweet =>
@@ -39,12 +42,16 @@ class TweetDispatcher extends Actor with ActorLogging {
       log.info(s"Received $received tweets so far ...")
     case Tick =>
       analysisActors.foreach(_ ! Tick)
+    case Save =>
+      analysisActors.foreach(_ ! Save)
   }
 
 }
 
 object TweetDispatcher {
   object Tick
+  object Save
+  object Restore
   var actor : ActorRef = _
   lazy val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]

@@ -8,7 +8,8 @@ libraryDependencies ++= Seq(
     "org.twitter4j" % "twitter4j-core" % "3.0.5",
     "org.twitter4j" % "twitter4j-stream" % "3.0.5",
     "org.reactivemongo" %% "play2-reactivemongo" % "0.10.2",
-    "org.apache.lucene" % "lucene-snowball" % "3.0.3"
+    "org.apache.lucene" % "lucene-snowball" % "3.0.3",
+    "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT"
 )     
 
 play.Project.playScalaSettings

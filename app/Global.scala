@@ -12,6 +12,8 @@ object Global extends GlobalSettings {
     Logger.info("Starting twitter actor")
     if(!Play.isTest) {
       val tweetDispatcher : ActorRef = Akka.system.actorOf(Props[TweetDispatcher], name = "tweetDispatcher")
+      // Try to restore former state
+      tweetDispatcher ! TweetDispatcher.Restore
       stream = new TwitterStream(tweetDispatcher)
       //stream = new MongoStream(tweetDispatcher)
       stream.start()

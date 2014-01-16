@@ -7,7 +7,7 @@ import org.joda.time.{Period, DateTime}
  *
  * <b>This implementation divides the time by hour and needs at least an event every hour </b>
  */
-class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) {
+class SlidingWindowCounter[T](val timespan: Period = Period.days(1)) extends Serializable {
 
   private val map = collection.mutable.Map[T, Array[Long]]()
   private var currentPosition = 0

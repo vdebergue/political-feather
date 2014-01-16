@@ -5,10 +5,14 @@ import models.Tweet
 import models.analysis.SlidingWindowCounter
 import actors.TweetDispatcher
 import play.api.libs.json.{JsValue, Writes, Json}
+import actors.utils.Restorable
+import scala.pickling._
+import binary._
 
-class MostUsedHastag extends Actor {
+class MostUsedHastag extends Actor with Restorable {
 
-  val hastagsCount = SlidingWindowCounter.oneDay[String]
+  var hastagsCount = SlidingWindowCounter.oneDay[String]
+  val file = "saved/hash.bin"
 
   def receive = {
     case tweet : Tweet =>
@@ -18,6 +22,10 @@ class MostUsedHastag extends Actor {
     case TweetDispatcher.Tick =>
       val json = Json.toJson(top10)
       TweetDispatcher.inHashTags.push(json)
+    case TweetDispatcher.Save =>
+      save(hastagsCount)
+    case TweetDispatcher.Restore =>
+      restore()
   }
 
   def mostUsed : (String, Long) = {
@@ -35,4 +43,10 @@ class MostUsedHastag extends Actor {
     )
   }
 
+  def restore() = {
+    val bytesOption = getFromFile()
+    bytesOption.map { bytes =>
+      hastagsCount = bytes.unpickle[SlidingWindowCounter[String]]
+    }
+  }
 }
