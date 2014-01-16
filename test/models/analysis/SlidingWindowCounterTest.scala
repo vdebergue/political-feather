@@ -4,6 +4,7 @@ import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import org.specs2.mutable.Specification
 import org.joda.time.DateTime
+import models._
 
 @RunWith(classOf[JUnitRunner])
 class SlidingWindowCounterTest extends Specification {
@@ -63,7 +64,30 @@ class SlidingWindowCounterTest extends Specification {
       }
       swc.top10.toMap must_== m.toList.toMap
     }
-  }
 
+    "work with users" in {
+      val u1 = new User {
+        val id = 1L
+        val name = "toto"
+        val screenName = "toto"
+        val profileImageUrl = ""
+      }
+
+      val u2 = new User {
+        val id = 1L
+        val name = "toto"
+        val screenName = "toto"
+        val profileImageUrl = ""
+      }
+      val swc = SlidingWindowCounter.oneDay[User]
+      val now = DateTime.now()
+      println(u2 == u1)
+
+      swc.increment(u1, now)
+      swc.increment(u2, now)
+
+      swc.top10.toMap must_== Map(u1 -> 2)
+    }
+  }
 
 }

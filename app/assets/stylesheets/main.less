@@ -7,20 +7,41 @@
     }
 
     text {
-        fill: white;
+        fill: lightgrey;
     }
 
-    .axis {
+}
+
+.axis {
+    text {
+        fill : black;
+        font: 10px sans-serif;
+    }
+    path, line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+}
+
+.mostActive {
+    width: 500px;
+    heigth: 500px;
+
+    rect {
+        fill: chocolate;
+    }
+
+    image {
+        height: 50px;
+        width: 50px;
+    }
+
+    .screenName {
         text {
-            fill : black;
-            font: 10px sans-serif;
+            fill: steelblue;
+            font: 12px sans-serif;
         }
-        path, line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-
     }
-
 }

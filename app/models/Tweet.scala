@@ -30,4 +30,11 @@ trait User {
     "@" + screenName
   }
 
+  override def equals(that: Any) = {
+    that match {
+      case that : User => that.id == this.id
+      case _ => false
+    }
+  }
+
 }
