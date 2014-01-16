@@ -44,8 +44,8 @@ class WordUsage extends Actor {
   }
 
   implicit val topWrites: Writes[List[(String, List[DateTime])]] = new Writes[List[(String, List[DateTime])]] {
-    def writes(o: List[(String, List[DateTime])]): JsValue = Json.arr(
-      o.map(t => Json.obj(t._1 -> Json.arr(t._2)))
+    def writes(o: List[(String, List[DateTime])]): JsValue = Json.toJson(
+      o.map(t => Json.obj(t._1 -> Json.toJson(t._2)))
     )
   }
 }

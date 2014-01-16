@@ -14,7 +14,8 @@ onNewMessage = (msg) ->
         console.log("ma")
         drawMostActive(data.mostActive)
     else if data.hasOwnProperty("wordUsage")
-        console.log("wordusage")
+        console.log("wordUsage")
+        console.log(data.wordUsage)
 
 
 drawHashTagsTop = (data) ->
@@ -73,8 +74,6 @@ count = (d) ->
     d.count
 
 drawMostActive = (data) -> 
-    console.log(data)
-
     margin = {top : 20, left: 10, right: 0, bottom:0}
     chart = d3.select(".mostActive")
     width = parseInt(chart.style("width"), 10)
@@ -96,7 +95,7 @@ drawMostActive = (data) ->
     gEnter = unit.enter().insert("g")
         .attr("transform", (d,i) -> "translate( #{x(0)}, #{y(i)})")
 
-    image = {w: 50, h: 50, left : 10}
+    image = {w: 40, h: 40, left : 10}
     image.top = (barHeight - image.h) / 2
         
     gEnter.append("rect")

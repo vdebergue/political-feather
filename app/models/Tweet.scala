@@ -30,6 +30,10 @@ trait User {
     "@" + screenName
   }
 
+  override def hashCode() = {
+    this.screenName.hashCode()
+  }
+
   override def equals(that: Any) = {
     that match {
       case that : User => that.id == this.id
