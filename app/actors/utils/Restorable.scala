@@ -5,11 +5,10 @@ import scala.pickling._
 import binary._
 import java.io.{FileNotFoundException, FileInputStream}
 
-trait Restorable { this : Actor =>
+trait Restorable {
 
   def restore() : Unit
-
-  val saver : ActorRef = context.actorOf(Props[SaverActor], "saver")
+  def save() : Unit
 
   def file : String
 
@@ -20,10 +19,5 @@ trait Restorable { this : Actor =>
     } catch {
       case t: FileNotFoundException => None
     }
-  }
-
-  // Send to the saver Actor the state
-  def save(state: Serializable) = {
-    saver ! SaverActor.ToSave(file, state)
   }
 }

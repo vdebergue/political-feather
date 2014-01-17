@@ -6,10 +6,14 @@ import models.analysis.{Ranking, SlidingWindowCounter}
 import actors.TweetDispatcher
 import play.api.libs.json._
 import models.JsonFormat._
+import actors.utils.Restorable
+import scala.util.Marshal
+import java.io.FileOutputStream
 
-class MostActive extends Actor {
+class MostActive extends Actor with Restorable {
 
-  val usersCount = SlidingWindowCounter.oneDay[User]
+  var usersCount = SlidingWindowCounter.oneDay[User]
+  val file = "saved/users.bin"
 
   def receive = {
     case tweet : Tweet =>
@@ -17,6 +21,10 @@ class MostActive extends Actor {
     case TweetDispatcher.Tick =>
       val json = Json.toJson(mostActiveTop10)
       TweetDispatcher.inMostActive.push(json)
+    case TweetDispatcher.Save =>
+      save()
+    case TweetDispatcher.Restore =>
+      restore()
 
   }
 
@@ -33,6 +41,20 @@ class MostActive extends Actor {
       "user" -> Json.toJson(o._1),
       "count" -> o._2
     )
+  }
+
+  def restore() = {
+    val bytes = getFromFile()
+    bytes.map { b =>
+      usersCount = Marshal.load[SlidingWindowCounter[User]](b)
+    }
+  }
+
+  def save() = {
+    val out = new FileOutputStream(file)
+    val bytes = Marshal.dump(usersCount)
+    out.write(bytes)
+    out.close()
   }
 
 }

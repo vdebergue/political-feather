@@ -1,15 +1,15 @@
 package actors.analysis
 
-import akka.actor.Actor
+import akka.actor.{ActorLogging, Actor}
 import models.Tweet
 import models.analysis.SlidingWindowCounter
 import actors.TweetDispatcher
 import play.api.libs.json.{JsValue, Writes, Json}
 import actors.utils.Restorable
-import scala.pickling._
-import binary._
+import scala.util.Marshal
+import java.io.FileOutputStream
 
-class MostUsedHastag extends Actor with Restorable {
+class MostUsedHastag extends Actor with Restorable with ActorLogging {
 
   var hastagsCount = SlidingWindowCounter.oneDay[String]
   val file = "saved/hash.bin"
@@ -23,7 +23,7 @@ class MostUsedHastag extends Actor with Restorable {
       val json = Json.toJson(top10)
       TweetDispatcher.inHashTags.push(json)
     case TweetDispatcher.Save =>
-      save(hastagsCount)
+      save()
     case TweetDispatcher.Restore =>
       restore()
   }
@@ -43,10 +43,20 @@ class MostUsedHastag extends Actor with Restorable {
     )
   }
 
+  def save() = {
+    log.info("Saving hashtags ...")
+    val out = new FileOutputStream(file)
+    val bytes = Marshal.dump(hastagsCount)
+    out.write(bytes)
+    out.close()
+  }
+
   def restore() = {
+    println("Restoring...")
     val bytesOption = getFromFile()
     bytesOption.map { bytes =>
-      hastagsCount = bytes.unpickle[SlidingWindowCounter[String]]
+      hastagsCount = Marshal.load[SlidingWindowCounter[String]](bytes)
+      println("Restored ! " + top10.length)
     }
   }
 }

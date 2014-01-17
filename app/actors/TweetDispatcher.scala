@@ -44,6 +44,8 @@ class TweetDispatcher extends Actor with ActorLogging {
       analysisActors.foreach(_ ! Tick)
     case Save =>
       analysisActors.foreach(_ ! Save)
+    case Restore =>
+      analysisActors.foreach(_ ! Restore)
   }
 
 }
