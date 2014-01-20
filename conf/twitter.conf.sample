@@ -1,0 +1,63 @@
+twitter {
+    url="https://stream.twitter.com/1/statuses/filter.json"
+    consumer.key=""
+    consumer.secret=""
+    client.accessToken=""
+    client.accessTokenSecret=""
+    ids = [
+        18814998, # F. Hollande
+        490126636, # N Sarkozy
+        105116603, # JF Copé
+        551669623, # F Fillon
+        258345629, # A Juppé
+        217749896, # M Le Pen
+        28332028, # JM Ayrault
+        25104112, # V Peillon
+        376295875, # MA Carlotti
+        20702279, # NKM
+        69255422, # Montebourg
+        251524687, # A Filipetti
+        38021678, # F Pellerin
+        837123698, # N Polony (Europe 1)
+        122946826, # Laura Slimani (jeunes socialistes)
+        26073581, #A Hidalgo
+        22428439, #L Fabius
+        24906326, #C Bartolone
+        219361536, #JV Place (EELV)
+        29499020, #Villepin
+        114037178, #T Wieder (Lemonde)
+        374184532, #B LeMaire
+        279137479, #JL Borloo
+        80820758, #JL Melenchon
+        359979086, #JP Raffarin
+        23458148, #L Chatel
+        17211968, #Bayrou
+        234035533, #Eva Joly
+        8493812, #Delanoe
+        26031424, #M Aubry
+        93484066, #Ch Taubira
+        621874680, #Matignon
+        951480480, #Fil gouve
+        263572557, #D batho
+        267084550, #C Roux (europe 1)
+        17508660, #C Duflot
+        90635543, #C Boutin
+        369914677, #jean-michel aphatie (RTL)
+        114704955, #le monde politique
+        413839619, #N Morano
+        47399805, #Edwy Plenel (Mediapart)
+        16222469, #C Barbier (L'Express)
+        44889514, #Les Echos
+        306686182, #Valérie Nataffe (TF1)
+        236059999, #Thierry Guerrier (journaliste)
+        380902292, #M Darmon (iTele)
+        41562681, #L'opinion
+        461149119, #Veronique Rigolet (RFI)
+        42589863, #Jul Martin (nouvel Ops)
+        33462636, #Camille Langlade (itélé)
+        26222064, #A Hebermont (Europe 1)
+        44465056, #Thibaut Pézerat (Europe 1)
+        46446811, #M Turchi (mediapart)
+        23623562, #Hashtable (_h16)
+    ]
+}
