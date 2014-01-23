@@ -19,7 +19,7 @@ onNewMessage = (msg) ->
 
 
 drawHashTagsTop = (data) ->
-    margin = {top : 20, left: 10, right: 0, bottom:0}
+    margin = {top : 20, left: 10, right: 10, bottom: 10}
     chart = d3.select(".hashtags")
     width = parseInt(chart.style("width"), 10)
     height = parseInt(chart.style("height"), 10)
@@ -39,13 +39,13 @@ drawHashTagsTop = (data) ->
     rect.enter().insert("rect")
         .attr("x", x(0))
         .attr("y", (d,i) -> y(i))
-        .attr("width", (d) -> x(d.count))
+        .attr("width", (d) -> x(d.count) - x(0))
         .attr("height", barHeight - 1)
 
     rect.transition()
         .duration(1000)
         .attr("y", (d,i) -> y(i))
-        .attr("width", (d) -> x(d.count))
+        .attr("width", (d) -> x(d.count) - x(0))
         .attr("height", barHeight - 1)
 
 
@@ -74,7 +74,7 @@ count = (d) ->
     d.count
 
 drawMostActive = (data) -> 
-    margin = {top : 20, left: 10, right: 0, bottom:0}
+    margin = {top : 20, left: 10, right: 10, bottom: 10}
     chart = d3.select(".mostActive")
     width = parseInt(chart.style("width"), 10)
     height = parseInt(chart.style("height"), 10)
@@ -90,16 +90,17 @@ drawMostActive = (data) ->
         .domain([0, data.length])
         .range([margin.top, height - margin.bottom])
 
-    unit = chart.selectAll("g").data(data, (d) -> d.user.screenName)
+    unit = chart.selectAll("g.user").data(data, (d) -> d.user.screenName)
 
     gEnter = unit.enter().insert("g")
+        .attr("class", "user")
         .attr("transform", (d,i) -> "translate( #{x(0)}, #{y(i)})")
 
     image = {w: 40, h: 40, left : 10}
     image.top = (barHeight - image.h) / 2
         
     gEnter.append("rect")
-        .attr("width", (d) -> x(d.count))
+        .attr("width", (d) -> x(d.count) - x(0))
         .attr("height", barHeight - 1)
     gEnter.append("text")
         .attr("y", barHeight / 2 - 5)
@@ -124,13 +125,14 @@ drawMostActive = (data) ->
         .duration(1000)
         .attr("transform", (d,i) -> "translate( #{x(0)}, #{y(i)})")
         .select("rect")
-            .attr("width", (d) -> x(d.count))
+            .attr("width", (d) -> x(d.count) - x(0))
             .attr("height", barHeight - 1)
 
     unit.exit().remove()
 
-    # chart.select("g.x.axis").remove()
-    # chart.append("g")
-    #     .attr("class", "x axis")
-    #     .attr("transform", "translate(0, #{margin.top - 1})")
-    #     .call(xAxis)
+    chart.select("g.x.axis").remove()
+    chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0, #{margin.top - 1})")
+        .call(xAxis)
+
