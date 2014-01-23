@@ -14,7 +14,7 @@ class TweetDispatcher extends Actor with ActorLogging {
 
   TweetDispatcher.actor = self
   var received = 0
-  //val mongoStore = context.actorOf(Props[MongoStoreActor], name = "mongoStore")
+  // val mongoStore = context.actorOf(Props[MongoStoreActor], name = "mongoStore")
 
   val analysisActors = ListBuffer[ActorRef]()
   val mostActive = context.actorOf(Props[MostActive], "mostActive")
@@ -38,6 +38,7 @@ class TweetDispatcher extends Actor with ActorLogging {
       }
       log.info(s"Received $received tweets so far ...")
     case Tick =>
+      TweetDispatcher.inTweetNumber.push(received)
       analysisActors.foreach(_ ! Tick)
   }
 
@@ -49,6 +50,7 @@ object TweetDispatcher {
   lazy val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outWordUsage: Enumerator[JsValue], inWordUsage: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outTweetNumber: Enumerator[Int], inTweetNumber: Channel[Int]) = Concurrent.broadcast[Int]
 
 //  import scala.concurrent.ExecutionContext.Implicits.global
 //  outHashtags.interleave(outMostActive) |>>> Iteratee.foreach[JsValue](println)

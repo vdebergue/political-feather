@@ -16,6 +16,8 @@ onNewMessage = (msg) ->
     else if data.hasOwnProperty("wordUsage")
         console.log("wordUsage")
         console.log(data.wordUsage)
+    else if data.hasOwnProperty("tweetNumber")
+        $("#tweetNumber").html(data.tweetNumber)
 
 
 drawHashTagsTop = (data) ->
