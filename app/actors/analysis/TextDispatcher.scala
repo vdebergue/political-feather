@@ -15,6 +15,8 @@ class TextDispatcher extends Actor{
 
   // Process actors
   val wordUsage = context.actorOf(Props[WordUsage], "wordUsage")
+  val mostUsedCategories = context.actorOf(Props[MostUsedCategories], "mostUsedCategories")
+  val sentiment = context.actorOf(Props[Sentiment], "sentiments")
   
 
   def receive = {
@@ -32,10 +34,14 @@ class TextDispatcher extends Actor{
       wordUsage ! WordUsage.Words(in.stems, in.tweet.createdAt)
 
     case in: WithTweet with Analysed =>
-      // do stuff
+      // send to categories result
+      mostUsedCategories ! MostUsedCategories.Input(in.categories, in.tweet.createdAt)
+      sentiment ! Sentiment.Input(in.positive, in.negative, in.tweet.createdAt, in.tweet.id.toString())
 
     case TweetDispatcher.Tick =>
       // dispatch to process actors
       wordUsage ! TweetDispatcher.Tick
+      mostUsedCategories ! TweetDispatcher.Tick
+      sentiment ! TweetDispatcher.Tick
   }
 }

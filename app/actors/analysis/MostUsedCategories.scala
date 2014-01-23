@@ -5,6 +5,7 @@ import org.joda.time.DateTime
 import MostUsedCategories._
 import models.analysis.SlidingWindowCounter
 import actors.TweetDispatcher
+import play.api.libs.json.{Json, JsValue, Writes}
 
 class MostUsedCategories extends Actor {
 
@@ -15,10 +16,16 @@ class MostUsedCategories extends Actor {
       categoriesCount.increment(catCount._1, date, catCount._2)
     }
     case TweetDispatcher.Tick =>
-      //TODO
-
+      TweetDispatcher.inCategories.push(Json.toJson(categoriesCount.top10))
   }
 
+  implicit val topWrites: Writes[List[(String, Long)]] = new Writes[List[(String, Long)]] {
+    def writes(o: List[(String, Long)]): JsValue =
+      Json.toJson(o.map(t => Json.obj(
+        "categorie" -> t._1,
+        "count" -> t._2
+      )))
+  }
 }
 
 object MostUsedCategories {

@@ -50,6 +50,8 @@ object TweetDispatcher {
   lazy val (outMostActive: Enumerator[JsValue], inMostActive: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outHashtags: Enumerator[JsValue], inHashTags: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outWordUsage: Enumerator[JsValue], inWordUsage: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outCategories: Enumerator[JsValue], inCategories: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outSentiment: Enumerator[JsValue], inSentiment: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outTweetNumber: Enumerator[Int], inTweetNumber: Channel[Int]) = Concurrent.broadcast[Int]
 
 //  import scala.concurrent.ExecutionContext.Implicits.global

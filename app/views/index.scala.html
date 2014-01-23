@@ -3,7 +3,9 @@
 @scripts = {
     <script>
         var Config = {
-            "wsUrl" : "@routes.Application.feed.webSocketURL()"
+            "wsUrl" : "@routes.Application.feed.webSocketURL()",
+            "tweetUrl" : "@routes.Application.tweet("")"
+
         }
     </script>
     <script src="@routes.Assets.at("bower_components/d3js/build/d3.v3.min.js")" charset="utf-8"></script>
@@ -16,10 +18,23 @@
         <p>Analysis based on <b id="tweetNumber"></b> tweets</p>
         <div class="row">
             <div class="col-lg-6">
+                <h3>Top Hastags of the day</h3>
                 <svg class="hashtags"></svg>
             </div>
             <div class="col-lg-6">
+                <h3>Most Active users</h3>
                 <svg class="mostActive"></svg>
+            </div>
+        </div>
+        <div class="row">
+            <h3>Sentiment map</h3>
+            <p>Tweets are classified and a sentiment score is set according to the words used <br>
+            Bigger circle represent a more recent tweet
+            </p>
+            <div class="col-lg-6">
+                <svg class="sentiment"></svg>
+            </div>
+            <div class="col-lg-6" id="tweet">
             </div>
         </div>
     </div>
