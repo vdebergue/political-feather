@@ -2,6 +2,7 @@ package utils
 
 import scala.io.Source
 import scala.collection.mutable
+import play.api.Play
 
 object TextAnalysis {
   lazy val (categories, wordsDic) = Dictionary.readFile
@@ -58,7 +59,9 @@ object TextAnalysis {
 object Dictionary {
 
   def readFile : (Map[Int, String], Map[String, Seq[Int]]) = {
-    val file = Source.fromFile(Conf.getKey("dictionary.file"))
+    import play.api.Play.current
+    val is = Play.resourceAsStream(Conf.getKey("dictionary.file"))
+    val file = Source.fromInputStream(is.get)
     val categories = collection.mutable.Map[Int, String]()
     val words = collection.mutable.Map[String, Seq[Int]]()
 
