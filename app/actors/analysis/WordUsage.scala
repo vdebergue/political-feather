@@ -30,7 +30,11 @@ class WordUsage extends Actor {
 
   def top10Words : List[(String, List[DateTime])] = {
     val now = DateTime.now()
-    count.top10.map(t => (t._1 -> dates.getOrElse(t._1, Nil).filter(datesAreSameDay(now, _))))
+    count.top10.map{ t =>
+      val list : List[DateTime] = dates.getOrElse(t._1, Nil)
+      val lastDate = list.headOption.getOrElse(now)
+      (t._1 -> list.filter(datesAreSameDay(lastDate, _)))
+    }
   }
 
   def datesAreSameDay(date1: DateTime, date2: DateTime): Boolean = {
@@ -40,12 +44,18 @@ class WordUsage extends Actor {
 
   def cleanDates() {
     val now = DateTime.now()
-    dates.foreach(t => dates.update(t._1, t._2.filter(datesAreSameDay(now, _))))
+    dates.foreach{t =>
+      val lastDate = t._2.headOption.getOrElse(now)
+      dates.update(t._1, t._2.filter(datesAreSameDay(lastDate, _)))
+    }
   }
 
   implicit val topWrites: Writes[List[(String, List[DateTime])]] = new Writes[List[(String, List[DateTime])]] {
     def writes(o: List[(String, List[DateTime])]): JsValue = Json.toJson(
-      o.map(t => Json.obj(t._1 -> Json.toJson(t._2)))
+      o.map(t => Json.obj(
+        "word" -> t._1,
+        "dates" -> Json.toJson(t._2))
+      )
     )
   }
 }

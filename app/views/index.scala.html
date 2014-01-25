@@ -15,7 +15,7 @@
 @main("Political Feather", scripts) {
     <div class="container">
         <h1>Political Feather</h1>
-        <p>Analysis based on <b id="tweetNumber"></b> tweets</p>
+        <p><b id="tweetNumber"></b> tweets received so far</p>
         <div class="row">
             <div class="col-lg-6">
                 <h3>Top Hastags of the day</h3>
@@ -28,8 +28,9 @@
         </div>
         <div class="row">
             <h3>Sentiment map</h3>
-            <p>Tweets are classified and a sentiment score is set according to the words used <br>
-            Bigger circle represent a more recent tweet
+            <p>A sentiment score is set according to the words used in the tweet<br>
+            Bigger and redder circle represent a more recent tweet
+            <small>Points at the (0,0) coordinates are removed</small>
             </p>
             <div class="col-lg-6">
                 <svg class="sentiment"></svg>
@@ -37,9 +38,13 @@
             <div class="col-lg-6" id="tweet">
             </div>
         </div>
+        <div class="row">
+            <h3>Word Usage</h3>
+            <div>
+                <svg class="wordUsage"></svg>
+            </div>
+        </div>
     </div>
-
-
 
 
 }

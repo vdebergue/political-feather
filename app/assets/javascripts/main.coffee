@@ -8,14 +8,11 @@ onNewMessage = (msg) ->
     data = JSON.parse(msg.data)
 
     if data.hasOwnProperty("hashtags")
-        console.log("hash")
         drawHashTagsTop(data.hashtags)
     else if data.hasOwnProperty("mostActive")
-        console.log("ma")
         drawMostActive(data.mostActive)
     else if data.hasOwnProperty("wordUsage")
-        console.log("wordUsage")
-        console.log(data.wordUsage)
+        drawWordUsage(data.wordUsage)
     else if data.hasOwnProperty("tweetNumber")
         $("#tweetNumber").html(data.tweetNumber)
     else if data.hasOwnProperty("sentiments")
@@ -209,7 +206,7 @@ drawSentiment = (data) ->
             .attr("cx", (d) -> x(d.pos))
             .attr("cy", (d) -> y(d.neg))
             .style("fill", (d) -> color(c(d.date)))
-            .on('mouseover', displayTweet)
+            .on("click", displayTweet)
 
     dots.transition()
         .duration(1000)
@@ -229,3 +226,66 @@ displayTweet = (d) ->
         $("#tweet").html(msg)
         $("#tweet").fadeIn()
     )
+
+# data = [ {word: "abc", dates : [123, 124, ...]}, ...]
+drawWordUsage = (data) ->
+    margin = {top : 20, left: 30, right: 20, bottom: 20}
+    chart = d3.select(".wordUsage")
+    width = parseInt(chart.style("width"), 10)
+    height = parseInt(chart.style("height"), 10)
+    dim = {height: 50}
+
+    minDate = d3.min(data, (d) -> d3.min(d.dates))
+    maxDate = d3.max(data, (d) -> d3.max(d.dates))
+
+    x = d3.time.scale()
+        .domain([new Date(+minDate), new Date(+maxDate)])
+        .rangeRound([margin.left, width - margin.right])
+
+    units = chart.selectAll("g.unit").data(data, (d) -> d.word)
+
+    units.enter()
+        .append("g")
+        .attr("class", (d, i) -> "unit unit-" + i)
+        .attr("width", width)
+        .attr("height", dim.height - 1)
+        .attr("transform", (d,i) -> "translate(0, #{i * dim.height})")
+        .append("text")
+            .text((d) -> d.word)
+
+    units.exit().remove()
+
+    # test ...
+    for o, i in data
+        window.t = o.dates
+        datesGrouped = groupDates(o.dates)
+        # draw chart with the dates
+        unit = chart.select(".unit-" + i)
+        y = d3.scale.linear()
+            .domain(d3.extent(datesGrouped, count))
+            .range([10, 0])
+
+        line = d3.svg.line()
+            .x((d) -> x(new Date(+d.date)))
+            .y((d) -> y(d.count))
+            .interpolate("monotone")
+
+        unit.append("path")
+            .attr("class", "line")
+            .attr("d", line(datesGrouped))
+
+    # /test
+
+# [date1, date1, ...] => [{date: date1, count: 2}, ...]
+window.groupDates = (dates) ->
+    map = {}
+    for date in dates
+        # set the minutes, seconds and milli to zero
+        rounded = Math.floor(date / 1000.0 / 3600) * 1000 * 3600
+        map[rounded] = (map[rounded] || 0) + 1
+
+    out = []
+    for k, v of map
+        out.push({date: k, count: v})
+    out
+    
