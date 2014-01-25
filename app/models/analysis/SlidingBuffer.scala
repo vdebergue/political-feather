@@ -10,6 +10,12 @@ trait WithDate {
   def date: DateTime
 }
 
+/**
+ * Store objects thar are within the timespan
+ * Clears the old objects after each push
+ * @param timespan
+ * @tparam T
+ */
 class SlidingBuffer[T <: WithDate](val timespan: Period = Period.days(1)) {
 
   var lastDate : DateTime = _

@@ -4,7 +4,7 @@ import akka.actor._
 import models.Tweet
 import TweetDispatcher._
 import scala.concurrent.duration._
-import actors.analysis.{TextDispatcher, MostUsedHastag, MostActive}
+import actors.analysis.{Activity, TextDispatcher, MostUsedHastag, MostActive}
 import scala.collection.mutable.ListBuffer
 import play.api.libs.iteratee.{Iteratee, Concurrent, Enumerator}
 import play.api.libs.json.JsValue
@@ -20,9 +20,11 @@ class TweetDispatcher extends Actor with ActorLogging {
   val mostActive = context.actorOf(Props[MostActive], "mostActive")
   val mostUsedHashtags = context.actorOf(Props[MostUsedHastag], "mostUsedHashtags")
   val textDispatcher = context.actorOf(Props[TextDispatcher], "textDispatcher")
+  val activity = context.actorOf(Props[Activity], "activity")
   analysisActors += mostActive
   analysisActors += mostUsedHashtags
   analysisActors += textDispatcher
+  analysisActors += activity
 
   // Send a tick every 30 sec
   context.system.scheduler.schedule(30.seconds, 30.seconds, self, Tick)(context.dispatcher)
@@ -52,6 +54,7 @@ object TweetDispatcher {
   lazy val (outWordUsage: Enumerator[JsValue], inWordUsage: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outCategories: Enumerator[JsValue], inCategories: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outSentiment: Enumerator[JsValue], inSentiment: Channel[JsValue]) = Concurrent.broadcast[JsValue]
+  lazy val (outActivity: Enumerator[JsValue], inActivity: Channel[JsValue]) = Concurrent.broadcast[JsValue]
   lazy val (outTweetNumber: Enumerator[Int], inTweetNumber: Channel[Int]) = Concurrent.broadcast[Int]
 
 //  import scala.concurrent.ExecutionContext.Implicits.global

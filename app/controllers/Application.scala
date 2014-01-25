@@ -21,6 +21,7 @@ object Application extends Controller {
     .interleave(TweetDispatcher.outTweetNumber &> enumerateeHeaderInt("tweetNumber"))
     .interleave(TweetDispatcher.outCategories &> enumerateeHeader("categories"))
     .interleave(TweetDispatcher.outSentiment &> enumerateeHeader("sentiments"))
+    .interleave(TweetDispatcher.outActivity &> enumerateeHeader("activity"))
 
 
   def feed = WebSocket.using[JsValue] { request =>
