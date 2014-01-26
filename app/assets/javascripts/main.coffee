@@ -4,6 +4,7 @@ $(document).ready () ->
     drawHashTagsTop([])
     drawMostActive([])
     drawActivity([], true)
+    drawWordUsage([], true)
 
 onNewMessage = (msg) ->
     data = JSON.parse(msg.data)
@@ -231,56 +232,95 @@ displayTweet = (d) ->
     )
 
 # data = [ {word: "abc", dates : [123, 124, ...]}, ...]
-drawWordUsage = (data) ->
-    margin = {top : 20, left: 30, right: 20, bottom: 20}
-    chart = d3.select(".wordUsage")
-    width = parseInt(chart.style("width"), 10)
-    height = parseInt(chart.style("height"), 10)
-    dim = {height: 50}
+drawWordUsage = (data, isInit = false) ->
+    margin = {top : 20, left: 30, right: 70, bottom: 20}
+    svg = d3.select(".wordUsage")
+    width = parseInt(svg.style("width"), 10) - margin.left - margin.right
+    height = parseInt(svg.style("height"), 10) - margin.top - margin.bottom
 
-    minDate = d3.min(data, (d) -> d3.min(d.dates))
-    maxDate = d3.max(data, (d) -> d3.max(d.dates))
+    if isInit
+        chart = svg.append("g")
+            .attr("class", "chart")
+            .attr("transform", "translate(#{margin.left}, #{margin.top})")
+        chart.append("path")
+            .attr("class", "line")
+    else
+        chart = svg.select("g.chart")
+
+    data = data.map((w) -> 
+        "word" : w.word
+        "values" : groupDates(w.dates)
+    ) 
+
+    minDate = d3.min(data, (d) -> d3.min(d.values, (d) -> d.date))
+    maxDate = d3.max(data, (d) -> d3.max(d.values, (d) -> d.date))
+    maxCount = d3.max(data, (d) -> d3.max(d.values, (d) -> d.count))
 
     x = d3.time.scale()
         .domain([new Date(+minDate), new Date(+maxDate)])
-        .rangeRound([margin.left, width - margin.right])
+        .range([0, width])
+    xAxis = d3.svg.axis().scale(x).orient("bottom")
+    
+    y = d3.scale.linear()
+        .domain([0, maxCount])
+        .range([height, 0])
+    yAxis = d3.svg.axis().scale(y).orient("left")
 
-    units = chart.selectAll("g.unit").data(data, (d) -> d.word)
+    line = d3.svg.line()
+        .x((d) -> x(new Date(+d.date)))
+        .y((d) -> y(d.count))
+        .interpolate("basis")
 
-    units.enter()
-        .append("g")
-        .attr("class", (d, i) -> "unit unit-" + i)
-        .attr("width", width)
-        .attr("height", dim.height - 1)
-        .attr("transform", (d,i) -> "translate(0, #{i * dim.height})")
+    color = d3.scale.category10()
+        .domain(data.map((w) -> w.word))
+
+    word = chart.selectAll(".word")
+        .data(data, (d) -> d.word)
+        .enter().append("g")
+        .attr("class", "word")
+
+    word.append("path")
+        .attr("class", "line")
+        .attr("d", (d) -> line(d.values))
+        .style("stroke", (d) -> color(d.word))
+
+    word.append("text")
+        .datum((d) -> {"word": d.word, "value": d.values[0]})
+        .attr("transform", (d) -> "translate( #{x(d.value.date)} , #{y(d.value.count)})")
+        .attr("x", 3)
+        .attr("dy", ".35em")
+        .style("fill", (d) -> color(d.word))
+        .text((d) -> d.word)
+
+    addAxis(chart, xAxis, "Time", yAxis, "Count", width, height)
+
+addAxis = (chart, xAxis, xTitle, yAxis, yTitle, width, height) ->
+    chart.select("g.axis.x").remove()
+    chart.select("g.axis.y").remove()
+    chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0, #{height + 1})")
+        .call(xAxis)
         .append("text")
-            .text((d) -> d.word)
-
-    units.exit().remove()
-
-    # test ...
-    for o, i in data
-        window.t = o.dates
-        datesGrouped = groupDates(o.dates)
-        # draw chart with the dates
-        unit = chart.select(".unit-" + i)
-        y = d3.scale.linear()
-            .domain(d3.extent(datesGrouped, count))
-            .range([10, 0])
-
-        line = d3.svg.line()
-            .x((d) -> x(new Date(+d.date)))
-            .y((d) -> y(d.count))
-            .interpolate("monotone")
-
-        unit.append("path")
-            .attr("class", "line")
-            .attr("d", line(datesGrouped))
-
-    # /test
+          .attr("class", "label")
+          .attr("x", width)
+          .attr("y", -6)
+          .style("text-anchor", "end")
+          .text(xTitle);
+    chart.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(0, 0)")
+        .call(yAxis)
+        .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text(yTitle)
 
 # [date1, date1, ...] => [{date: date1, count: 2}, ...]
-window.groupDates = (dates) ->
+groupDates = (dates) ->
     map = {}
     for date in dates
         # set the minutes, seconds and milli to zero
@@ -311,20 +351,23 @@ drawActivity = (data, isInit = false) ->
 
     extentDate = d3.extent(data, (d) -> d.date)
     extentCount = d3.extent(data, count)
-    console.log(extentDate)
     x = d3.time.scale()
         .domain([new Date(+extentDate[0]), new Date(+extentDate[1])])
         .rangeRound([0, width])
-
+    xAxis = d3.svg.axis().scale(x).orient("bottom")
+    
     y = d3.scale.linear()
         .domain(extentCount)
         .range([height, 0])
+    yAxis = d3.svg.axis().scale(y).orient("left")
 
     line = d3.svg.line()
             .x((d) -> x(new Date(+d.date)))
             .y((d) -> y(d.count))
+            .interpolate("basis")
 
-    console.log(data)
     p = chart.select("path").datum(data)
 
     p.attr("d", line)
+
+    addAxis(chart, xAxis, "Time", yAxis, "Count", width, height)
