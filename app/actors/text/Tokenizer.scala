@@ -17,8 +17,14 @@ class Tokenizer extends Actor {
   }
 
   def tokenize(text: String): List[String] = {
-    text.replaceAll("#", "").replaceAll("'", " ").toLowerCase().split(' ').filterNot(isStopWord).toList
+    val lowered = text.replaceAll("#", "").replaceAll("'", " ").toLowerCase()
+    val userNameRemoved = Tokenizer.userNameRegex replaceAllIn(lowered, "")
+    userNameRemoved.split(' ')
+      .map{word : String => word.filter(_.isLetterOrDigit) }
+      .filter(_.length > 1)
+      .filterNot(isStopWord).toList
   }
+
 
   def isStopWord(word: String) : Boolean = {
     stopWords.contains(word.trim)
@@ -36,11 +42,15 @@ class Tokenizer extends Actor {
     "soyons", "soyez", "soient", "fusse", "fusses", "fût", "fussions", "fussiez",
     "fussent", "ceci", "cela", "cet", "cette", "ici", "ils", "les", "leurs", "quel",
     "quels", "quelle", "quelles", "sans", "soi", "ai", "as", "eu", "avons", "avez",
-    "avait", "avaient", "avions", "ont"
+    "avait", "avaient", "avions", "ont", "a", "ça",
+    // Special twitter stop words:
+    "rt"
   )
+
 
 }
 
 object Tokenizer {
+  val userNameRegex = """@\w{1,15}""".r
   case class Result(tweet: Tweet, tokens: List[String]) extends Tokenized with WithTweet
 }
