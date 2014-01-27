@@ -141,6 +141,46 @@ drawMostActive = (data) ->
         .attr("transform", "translate(0, #{margin.top - 1})")
         .call(xAxis)
 
+drawActivity = (data, isInit = false) ->
+    margin = {top : 20, left: 30, right: 20, bottom: 20}
+    svg = d3.select(".activity")
+    width = parseInt(svg.style("width"), 10) - margin.left - margin.right
+    height = parseInt(svg.style("height"), 10) - margin.top - margin.bottom
+
+    if isInit
+        chart = svg.append("g")
+            .attr("class", "chart")
+            .attr("transform", "translate(#{margin.left}, #{margin.top})")
+        chart.append("path")
+            .attr("class", "line")
+    else
+        chart = svg.select("g.chart")
+
+    data = groupDates(data)
+
+    extentDate = d3.extent(data, (d) -> d.date)
+    extentCount = d3.extent(data, count)
+    x = d3.time.scale()
+        .domain([new Date(+extentDate[0]), new Date(+extentDate[1])])
+        .rangeRound([0, width])
+    xAxis = d3.svg.axis().scale(x).orient("bottom")
+    
+    y = d3.scale.linear()
+        .domain(extentCount)
+        .range([height, 0])
+    yAxis = d3.svg.axis().scale(y).orient("left")
+
+    line = d3.svg.line()
+            .x((d) -> x(new Date(+d.date)))
+            .y((d) -> y(d.count))
+            .interpolate("basis")
+
+    p = chart.select("path").datum(data)
+
+    p.attr("d", line)
+
+    addAxis(chart, xAxis, "Time", yAxis, "Count", width, height)
+
 drawSentiment = (data) ->
     margin = {top : 20, left: 30, right: 20, bottom: 20}
     chart = d3.select(".sentiment")
@@ -283,9 +323,18 @@ drawWordUsage = (data, isInit = false) ->
         .attr("class", "line")
         .attr("d", (d) -> line(d.values))
         .style("stroke", (d) -> color(d.word))
+        .on("mouseover", () -> 
+            elem = d3.select(this)
+            chart.selectAll(".text").style("display", "none")
+            chart.selectAll(".text-" + elem.datum().word).style("display", "block")
+        )
+        .on("mouseout", () ->
+            chart.selectAll(".text").style("display", "block")
+        )
 
     word.append("text")
         .datum((d) -> {"word": d.word, "value": d.values[0]})
+        .attr("class", (d) -> "text text-" + d.word)
         .attr("transform", (d) -> "translate( #{x(d.value.date)} , #{y(d.value.count)})")
         .attr("x", 3)
         .attr("dy", ".35em")
@@ -332,42 +381,4 @@ groupDates = (dates) ->
         out.push({date: k, count: v})
     out
     
-drawActivity = (data, isInit = false) ->
-    margin = {top : 20, left: 30, right: 20, bottom: 20}
-    svg = d3.select(".activity")
-    width = parseInt(svg.style("width"), 10) - margin.left - margin.right
-    height = parseInt(svg.style("height"), 10) - margin.top - margin.bottom
 
-    if isInit
-        chart = svg.append("g")
-            .attr("class", "chart")
-            .attr("transform", "translate(#{margin.left}, #{margin.top})")
-        chart.append("path")
-            .attr("class", "line")
-    else
-        chart = svg.select("g.chart")
-
-    data = groupDates(data)
-
-    extentDate = d3.extent(data, (d) -> d.date)
-    extentCount = d3.extent(data, count)
-    x = d3.time.scale()
-        .domain([new Date(+extentDate[0]), new Date(+extentDate[1])])
-        .rangeRound([0, width])
-    xAxis = d3.svg.axis().scale(x).orient("bottom")
-    
-    y = d3.scale.linear()
-        .domain(extentCount)
-        .range([height, 0])
-    yAxis = d3.svg.axis().scale(y).orient("left")
-
-    line = d3.svg.line()
-            .x((d) -> x(new Date(+d.date)))
-            .y((d) -> y(d.count))
-            .interpolate("basis")
-
-    p = chart.select("path").datum(data)
-
-    p.attr("d", line)
-
-    addAxis(chart, xAxis, "Time", yAxis, "Count", width, height)
