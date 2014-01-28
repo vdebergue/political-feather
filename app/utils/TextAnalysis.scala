@@ -25,7 +25,7 @@ object TextAnalysis {
 
   def classify(words: List[String]) = {
     var classes = mutable.Buffer[Int]()
-    for( word <- words) {
+    for (word <- words) {
       classifyWord(word.toLowerCase).map(s => classes ++= s)
     }
     classes.groupBy(identity).mapValues(_.size) -- nonMeaningfullCategories
@@ -37,7 +37,8 @@ object TextAnalysis {
       else if (negativeCategories.contains(catTuple._1)) (scores._1, scores._2 + catTuple._2)
       else scores
     )
-    (round2(positive/wordCount), round2(negative/wordCount))
+    val total = math.max(wordCount, positive + negative)
+    (round2(positive/total), round2(negative/total))
   }
 
   def getCategoryName(category: Int) : String = {
