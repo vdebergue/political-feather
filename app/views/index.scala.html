@@ -5,11 +5,14 @@
         var Config = {
             "wsUrl" : "@routes.Application.feed.webSocketURL()",
             "tweetUrl" : "@routes.Application.tweet("")"
-
         }
     </script>
     <script src="@routes.Assets.at("bower_components/d3js/build/d3.v3.min.js")" charset="utf-8"></script>
     <script src="@routes.Assets.at("javascripts/main.js")"></script>
+    <script src="@routes.Assets.at("javascripts/top.js")"></script>
+    <script src="@routes.Assets.at("javascripts/activity.js")"></script>
+    <script src="@routes.Assets.at("javascripts/sentiment.js")"></script>
+    <script src="@routes.Assets.at("javascripts/usage.js")"></script>
 }
 
 @main("Political Feather", scripts) {
