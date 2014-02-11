@@ -19,4 +19,9 @@ package object text {
     def positive: Double
     def negative: Double
   }
+
+  trait AnalysedBis {
+    def positive: Double
+    def negative: Double
+  }
 }

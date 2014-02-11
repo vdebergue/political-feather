@@ -7,6 +7,7 @@ import actors.TweetDispatcher
 import play.api.libs.json.{JsObject, Json, JsValue}
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.ws.WS
+import utils.LearningAnalyzer
 
 object Application extends Controller {
 
@@ -42,6 +43,11 @@ object Application extends Controller {
     WS.url("https://api.twitter.com/1/statuses/oembed.json?id=" + id).get().map( resp =>
       Ok(resp.json)
     )
+  }
+
+  def getUnknowWords = Action {
+    val set = LearningAnalyzer.getUnknowns
+    Ok(set.mkString)
   }
 
 }
